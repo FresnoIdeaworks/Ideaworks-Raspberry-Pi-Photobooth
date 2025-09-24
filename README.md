@@ -12,4 +12,5 @@ We customized the overlay for our Fresno JAM and added a few tweaks to suit our 
 You can see examples from our booth and similar booths from other events in the official Raspberry Pi blog post:
 Raspberry Jam Big Birthday Weekend 2019 Roundup.
 
-Over the years, we reused the booth for events like ArtHop and our 10th anniversary celebration in 2022 (see above). But by 2025, the original system was outdated—prompting a full rebuild with modern hardware, updated libraries, and new social media integrations.
+Over the years, we reused the booth for events like ArtHop and our 10th anniversary celebration in 2022 (see above). But by 2025, the original system was outdated—prompting a full rebuild with modern hardware, updated libraries, and new social media integrations.  With Fresno Ideaworks' first foray as a presenter at Maker Fair Bay Area in September 2025, we felt it was time to create an updated self-contained photobooth, with all the bells & whistles.  
+Enjoy.
