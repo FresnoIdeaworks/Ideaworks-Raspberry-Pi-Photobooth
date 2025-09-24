@@ -1,18 +1,18 @@
 """
 Fresno Ideaworks Raspberry Pi photobooth for Maker Faire 2025.
 J. Daniel Ozeran dano@fresnoideaworks.org
-8/25/2025
-Currently takes picture and places overlay and saves to static filename.
-Need to add button control for shutter, possibly with LED signal or decoration.
-Also need to add generated filenames to account for sequential images.
-Add tweeting (or look into alternate platform for distribution).
+9/23/2025
+Button controls the shutter, runs a countdown and takes the pictures.
+Takes pictures and merges with overlay.  Image is "flattened" and saved using a dynamic filename.
+Once files are saved, a random message is selected and images are uploaded to
+a selection of social media sites.
 """
 from auth import INSTA_ID, INSTA_KEY, SKY_ID, SKY_KEY
 from gpiozero import Button
 import os
 from pathlib import Path
-from instagrapi import Client as IClient           # Instagram client is Client
-from atproto import Client as BClient  # BlueSky library also uses Client 
+from instagrapi import Client as IClient           # Instagram client is IClient
+from atproto import Client as BClient  # BlueSky library also uses BClient 
 from atproto import models
 from datetime import datetime, timedelta
 from PIL import Image
@@ -35,13 +35,12 @@ overlay_path = str(dirpath)+"/overlays"
 photo_path = str(dirpath)+"/photos"
 Button.was_held = False
 button = Button(17,hold_time=5)
-#messages = ["We're having fun at MakerFaire", "Check us out here with Fresno Ideaworks", "Makers make cool stuff"] # We can use either.  Using a file makes updates easier.
+#messages = ["We're having fun at MakerFaire", "Check us out here with Fresno Ideaworks", "Makers make cool stuff"] # You can use either.  Using a file makes updates easier.
 messages=[]
 with open('message.txt', mode='r') as f:
    for lines in f:
         line = lines.rstrip()  # remove the newline character
         messages.append(line)  # add the line in the list
-
 
 camera = Picamera2()
 # Configure for still capture
@@ -58,13 +57,6 @@ camera.configure(preview_config)
 # The path to your transparent PNG frame
 overlay_image1 = overlay_path+"/MakerFaireOverlay.png"
 overlay_image2 = overlay_path+"/MakerFaireOverlay2.png"
-# Load the frame image for drawing during pre_callback
-#frame = Image.open(overlay_image1).convert("RGBA").resize(preview_config["main"]["size"])
-#frame_cv = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2RGBA)
-#overlay = cv2.imread("overlay.png", cv2.IMREAD_UNCHANGED)
-#overlay_list=load_overlay_names()
-#overlays=load_overlays()
-#camera.set_overlay(overlays[1])
 overlay_list = [] # Filenames ["MakerFaireOverlay.png", "MakerFaireOverlay2.png"] (etc.)
 overlays = [] #storage of the actual overlay Images.
 
@@ -165,7 +157,7 @@ def Insta_upload(client, media, message = "Hello from @FresnoIdeaworks"):
     try:
         if client: # client is present and presumably logged in.
             logger.info("Logged in and uploading to Instagram. ")
-            client.album_upload(media, message, extra_data={"custom_accessibility_caption": "alt text example", "like_and_view_counts_disabled": 1, "disable_comments": 1,})
+            client.album_upload(media, message, extra_data={"custom_accessibility_caption": "alt text example", "like_and_view_counts_disabled": 1, "disable_comments": 0,})
         else: 
             logger.info("Client error for Instagram.")
     except NameError:
